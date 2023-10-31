@@ -25,7 +25,11 @@ public class Board {
         food = new Food(getRandomPoint());
 
         obstacles = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            addRandomObstacle();
+        }
     }
+    
 
     public Point wrap(Point point) {
         int x = point.getX();
@@ -44,6 +48,18 @@ public class Board {
             point = new Point(random.nextInt(rows), random.nextInt(cols));
         } while (point.equals(snake.getHead()));
         return point;
+    }
+    private Point getRandomPoint() {
+        Random random = new Random();
+        Point point;
+        do {
+            point = new Point(random.nextInt(rows), random.nextInt(cols));
+        } while (snake.getPoints().contains(point) || obstacles.stream().anyMatch(obstacle -> obstacle.getPoint().equals(point)));
+        return point;
+    }
+
+    public void addRandomObstacle() {
+        obstacles.add(new Obstacle(getRandomPoint()));
     }
 
     public void update() {
