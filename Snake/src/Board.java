@@ -1,5 +1,6 @@
 import javafx.scene.paint.Color;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Board {
@@ -11,6 +12,7 @@ public class Board {
 
     private Snake snake;
     private Food food;
+    private List<Obstacle> obstacles;
 
     public Board(final double width, final double height) {
         rows = (int) width / SIZE;
@@ -21,6 +23,8 @@ public class Board {
 
         // put the food at a random location
         food = new Food(getRandomPoint());
+
+        obstacles = new ArrayList<>();
     }
 
     public Point wrap(Point point) {
@@ -73,5 +77,12 @@ public class Board {
 
     public Food getFood() {
         return this.food;
+    }
+    public List<Obstacle> getObstacles() {
+        return obstacles;
+    }
+
+    public void addObstacle(Obstacle obstacle) {
+        obstacles.add(obstacle);
     }
 }
