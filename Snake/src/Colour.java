@@ -22,14 +22,16 @@ public class Colour {
         gc.setFill(Color.BEIGE);
         gc.fillText("Score : " + 100 * snake.getPoints().size(), 10, 490);
 
-        // Paint the obstacles
-        gc.setFill(Obstacle.COLOR);
         for (Obstacle obstacle : board.getObstacles()) {
-            paintPoint(obstacle.getPoint(), gc);
+            gc.setFill(Color.BLUE);
+            for (Point point : obstacle.getPoints()) {
+                paintPoint(point, gc);
+            }
         }
     }
 
-    private static void paintPoint(Point point, GraphicsContext gc) {
+    public static void paintPoint(Point point, GraphicsContext gc) {
+        // Assuming point.x and point.y are the coordinates and SIZE is the size of the point
         gc.fillRect(point.getX() * Board.SIZE, point.getY() * Board.SIZE, Board.SIZE, Board.SIZE);
     }
 

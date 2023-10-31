@@ -2,6 +2,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 public class Board {
     public static final int SIZE = 10;
@@ -12,9 +13,12 @@ public class Board {
 
     private Snake snake;
     private Food food;
+    private Random random = new Random();
     private List<Obstacle> obstacles;
 
     public Board(final double width, final double height) {
+        this.obstacles = new ArrayList<>();
+
         rows = (int) width / SIZE;
         cols = (int) height / SIZE;
 
@@ -24,12 +28,10 @@ public class Board {
         // put the food at a random location
         food = new Food(getRandomPoint());
 
-        obstacles = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             addRandomObstacle();
         }
     }
-    
 
     public Point wrap(Point point) {
         int x = point.getX();
@@ -40,35 +42,66 @@ public class Board {
         if (y < 0) y = cols - 1;
         return new Point(x, y);
     }
-
     private Point getRandomPoint() {
         Random random = new Random();
         Point point;
         do {
             point = new Point(random.nextInt(rows), random.nextInt(cols));
-        } while (point.equals(snake.getHead()));
+        } while (snake.getPoints().contains(point) || obstaclesContainPoint(point));
         return point;
     }
-    private Point getRandomPoint() {
-        Random random = new Random();
-        Point point;
-        do {
-            point = new Point(random.nextInt(rows), random.nextInt(cols));
-        } while (snake.getPoints().contains(point) || obstacles.stream().anyMatch(obstacle -> obstacle.getPoint().equals(point)));
-        return point;
+
+    private boolean obstaclesContainPoint(Point point) {
+        for (Obstacle obstacle : obstacles) {
+            if (obstacle.getPoints().contains(point)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void addRandomObstacle() {
-        obstacles.add(new Obstacle(getRandomPoint()));
+        Random random = new Random();
+        List<Point> obstaclePoints = new ArrayList<>();
+        Point center = getRandomPoint();
+        int obstacleSize = random.nextInt(5) + 3; // Random size between 3 and 7
+        for (int i = 0; i < obstacleSize; i++) {
+            int x = center.getX() + random.nextInt(3) - 1; // -1, 0, or 1
+            int y = center.getY() + random.nextInt(3) - 1; // -1, 0, or 1
+            obstaclePoints.add(new Point(x, y));
+        }
+        obstacles.add(new Obstacle(obstaclePoints));
     }
 
     public void update() {
+        if (!snake.isSafe()) {
+            return; 
+        }
+
         if (food.getPoint().equals(snake.getHead())) {
             snake.extend();
             food.setPoint(getRandomPoint());
         } else {
             snake.move();
         }
+
+        checkSnakeSafety();
+    }
+
+    private void checkSnakeSafety() {
+        if (checkCollisionWithObstacles()) {
+            snake.setSafe(false);
+        }
+    }
+
+    private boolean checkCollisionWithObstacles() {
+        Point head = snake.getHead();
+        for (Obstacle obstacle : obstacles) {
+            if (obstacle.getPoints().contains(head)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getCols() {

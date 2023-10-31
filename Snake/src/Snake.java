@@ -13,6 +13,7 @@ public class Snake {
     private Point head;
     private int xVelocity;
     private int yVelocity;
+    private boolean isSafe;
 
     public Snake(Board board, Point initialPoint) {
         length = 1;
@@ -23,6 +24,7 @@ public class Snake {
         this.board = board;
         xVelocity = 0;
         yVelocity = 0;
+        this.isSafe = true;
     }
 
     private void growTo(Point point) {
@@ -47,7 +49,10 @@ public class Snake {
     }
 
     public boolean isSafe() {
-        return safe || length == 1;
+        return isSafe;
+    }
+    public void setSafe(boolean isSafe) {
+        this.isSafe = isSafe;
     }
 
     public Point getHead() {
@@ -61,7 +66,7 @@ public class Snake {
     public void move() {
         if (!isStill()) {
             Point newHead = head.translate(xVelocity, yVelocity);
-            if (board.getObstacles().stream().anyMatch(obstacle -> obstacle.getPoint().equals(newHead))) {
+            if (board.getObstacles().stream().anyMatch(obstacle -> obstacle.getPoints().equals(newHead))) {
                 safe = false;
             } else {
                 shiftTo(newHead);
@@ -72,7 +77,7 @@ public class Snake {
     public void extend() {
         if (!isStill()) {
             Point newHead = head.translate(xVelocity, yVelocity);
-            if (board.getObstacles().stream().anyMatch(obstacle -> obstacle.getPoint().equals(newHead))) {
+            if (board.getObstacles().stream().anyMatch(obstacle -> obstacle.getPoints().equals(newHead))) {
                 safe = false;
             } else {
                 growTo(newHead);
