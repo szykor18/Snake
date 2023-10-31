@@ -60,13 +60,23 @@ public class Snake {
 
     public void move() {
         if (!isStill()) {
-            shiftTo(head.translate(xVelocity, yVelocity));
+            Point newHead = head.translate(xVelocity, yVelocity);
+            if (board.getObstacles().stream().anyMatch(obstacle -> obstacle.getPoint().equals(newHead))) {
+                safe = false;
+            } else {
+                shiftTo(newHead);
+            }
         }
     }
 
     public void extend() {
         if (!isStill()) {
-            growTo(head.translate(xVelocity, yVelocity));
+            Point newHead = head.translate(xVelocity, yVelocity);
+            if (board.getObstacles().stream().anyMatch(obstacle -> obstacle.getPoint().equals(newHead))) {
+                safe = false;
+            } else {
+                growTo(newHead);
+            }
         }
     }
 
