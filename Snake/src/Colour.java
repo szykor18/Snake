@@ -21,6 +21,12 @@ public class Colour {
         // The score
         gc.setFill(Color.BEIGE);
         gc.fillText("Score : " + 100 * snake.getPoints().size(), 10, 490);
+
+        // Paint the obstacles
+        gc.setFill(Obstacle.COLOR);
+        for (Obstacle obstacle : board.getObstacles()) {
+            paintPoint(obstacle.getPoint(), gc);
+        }
     }
 
     private static void paintPoint(Point point, GraphicsContext gc) {
